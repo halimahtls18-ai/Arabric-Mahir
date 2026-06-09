@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabric Mahir - Belajar Sharaf & Kalam Seru</title>
+    
+    <!-- Tailwind CSS untuk Styling Premium -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts Inter & Tajawal (Font Arab Cantik) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome untuk Icon Menarik -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        arabic: ['Tajawal', 'sans-serif'],
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 2s infinite',
+                        'pulse-slow': 'pulse 3s infinite',
+                        'shake': 'shake 0.5s ease-in-out',
+                    },
+                    keyframes: {
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '25%': { transform: 'translateX(-6px)' },
+                            '75%': { transform: 'translateX(6px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-container::-webkit-scrollbar-track {
+            background: rgba(243, 232, 255, 0.5);
+            border-radius: 10px;
+        }
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(168, 85, 247, 0.4);
+            border-radius: 10px;
+        }
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(168, 85, 247, 0.6);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(243, 232, 255, 0.7);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen font-sans flex flex-col antialiased selection:bg-purple-200">
+
+    <header class="glass-card sticky top-0 z-40 px-4 py-3 shadow-sm border-b border-purple-100">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-tr from-purple-600 to-pink-500 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-md shadow-purple-200 animate-bounce-slow">
+                    <span class="font-arabic font-bold text-xl">💡</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-purple-700 to-pink-600 bg-clip-text text-transparent">Arabric Mahir</h1>
+                    <p class="text-xs text-purple-500 font-medium tracking-wide">Kalam & Sharaf Pemula Plus ✨</p>
+                </div>
+            </div>
+            
+            <!-- Widget Skor, Nyawa, dan Tombol Pengaturan API -->
+            <div class="flex items-center gap-4">
+                <!-- Poin Skor -->
+                <div class="flex items-center gap-1.5 bg-yellow-100 border border-yellow-200 px-3 py-1.5 rounded-full text-yellow-800 font-bold text-sm shadow-sm transition-all duration-300 transform hover:scale-105" id="score-badge">
+                    <i class="fa-solid fa-crown text-yellow-500"></i>
+                    <span id="score-val">100</span> Poin
+                </div>
+
+                <!-- Nyawa / Hearts -->
+                <div class="flex items-center gap-1 bg-red-100 border border-red-200 px-3 py-1.5 rounded-full text-red-600 font-bold text-sm shadow-sm" id="lives-container">
+                    <i class="fa-solid fa-heart animate-pulse"></i>
+                    <i class="fa-solid fa-heart animate-pulse"></i>
+                    <i class="fa-solid fa-heart animate-pulse"></i>
+                </div>
+
+                <!-- Tombol Pengaturan API Key (Opsional) -->
+                <button onclick="toggleSettingsModal()" class="w-9 h-9 rounded-full bg-purple-100 hover:bg-purple-200 text-purple-700 flex items-center justify-center transition-all shadow-sm" title="Integrasi Gemini API">
+                    <i class="fa-solid fa-key text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6 flex flex-col md:flex-row gap-6 items-stretch justify-center">
+        
+        <!-- DASHBOARD INTRO (Akan disembunyikan setelah game dimulai) -->
+        <div id="intro-panel" class="w-full max-w-3xl glass-card rounded-3xl p-6 md:p-10 shadow-xl border border-purple-100 text-center flex flex-col items-center justify-center my-auto transition-all duration-500">
+            <span class="text-6xl mb-4 animate-bounce-slow">👋</span>
+            <h2 class="text-3xl font-extrabold text-purple-900 mb-2 font-arabic">Marhaban, Sahabat Arabric!</h2>
+            <p class="text-purple-600 max-w-lg mb-6 leading-relaxed text-sm md:text-base">
+                Kenalin, aku <strong class="text-pink-600">Kakak Tutor Arabric Mahir</strong>! Kita bakal belajar percakapan bahasa Arab sehari-hari (<em class="italic">Kalam</em>) sekaligus melatih perubahan kata kerja yang asyik (<em class="italic">Sharaf</em>).
+            </p>
+
+            <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <!-- Fitur Card 1 -->
+                <div class="bg-purple-50 border border-purple-100 p-4 rounded-2xl text-center hover:shadow-md transition">
+                    <div class="bg-purple-600 text-white w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2 text-sm"><i class="fa-solid fa-comments"></i></div>
+                    <h4 class="font-bold text-purple-950 text-sm mb-1">Interactive Kalam</h4>
+                    <p class="text-xs text-purple-600">Simulasi percakapan nyata langsung di browser.</p>
+                </div>
+                <!-- Fitur Card 2 -->
+                <div class="bg-pink-50 border border-pink-100 p-4 rounded-2xl text-center hover:shadow-md transition">
+                    <div class="bg-pink-500 text-white w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2 text-sm"><i class="fa-solid fa-rotate"></i></div>
+                    <h4 class="font-bold text-pink-950 text-sm mb-1">Misi Sharaf</h4>
+                    <p class="text-xs text-pink-600">Latihan merubah bentuk kata kerja (Fi'il) tanpa bosan.</p>
+                </div>
+                <!-- Fitur Card 3 -->
+                <div class="bg-yellow-50 border border-yellow-100 p-4 rounded-2xl text-center hover:shadow-md transition">
+                    <div class="bg-yellow-600 text-white w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2 text-sm"><i class="fa-solid fa-volume-high"></i></div>
+                    <h4 class="font-bold text-yellow-950 text-sm mb-1">Audio Native</h4>
+                    <p class="text-xs text-yellow-600">Klik ikon suara untuk dengerin pengucapan Arab yang fasih!</p>
+                </div>
+            </div>
+
+            <!-- Pilih Mode Latihan Sebelum Mulai -->
+            <div class="w-full max-w-md bg-purple-50/50 p-5 rounded-2xl border border-purple-100 mb-6">
+                <h3 class="font-bold text-purple-900 mb-3 text-sm tracking-wider uppercase"><i class="fa-solid fa-layer-group mr-1.5"></i> Pilih Ruang Belajarmu</h3>
+                <div class="flex flex-col gap-2.5">
+                    <button onclick="selectLevel('1')" id="btn-lvl-1" class="w-full text-left p-3.5 rounded-xl border-2 border-purple-500 bg-purple-100 text-purple-950 hover:bg-purple-200 font-bold flex items-center justify-between transition-all">
+                        <span>🗣️ Level 1: Kamar Kosan (Fi'il Madhi - Masa Lalu)</span>
+                        <i class="fa-solid fa-circle-check text-purple-600"></i>
+                    </button>
+                    <button onclick="selectLevel('2')" id="btn-lvl-2" class="w-full text-left p-3.5 rounded-xl border border-purple-200 bg-white text-purple-900 hover:bg-purple-50 flex items-center justify-between transition-all">
+                        <span>🏫 Level 2: Kelas & Sekolah (Fi'il Mudhari' - Masa Kini)</span>
+                        <i class="fa-solid fa-lock text-purple-300"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold text-lg hover:from-purple-700 hover:to-pink-600 shadow-lg shadow-purple-200 transform hover:scale-105 transition active:scale-95">
+                Mulai Belajar Sekarang! 🚀
+            </button>
+        </div>
+
+        <!-- CHAT INTERFACE (Akan disembunyikan sebelum game dimulai) -->
+        <div id="game-panel" class="hidden w-full flex flex-col lg:flex-row gap-6 max-h-[80vh]">
+            
+            <!-- Panel Kiri: Ruang Obrolan Chat Simulator -->
+            <div class="flex-1 flex flex-col bg-white rounded-3xl shadow-lg border border-purple-100 overflow-hidden min-h-[550px]">
+                
+                <!-- Chat Header -->
+                <div class="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-5 py-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="relative">
+                            <span class="text-3xl">👩‍🏫</span>
+                            <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-400 border-2 border-white rounded-full animate-pulse"></span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-base">Kakak Tutor Arabric Mahir</h3>
+                            <p class="text-xs text-purple-100 font-medium">Sedang Aktif Mengajar 🌟</p>
+                        </div>
+                    </div>
+                    <button onclick="resetGame()" class="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-full font-bold transition-all">
+                        <i class="fa-solid fa-arrow-rotate-left mr-1"></i> Mulai Ulang
+                    </button>
+                </div>
+
+                <!-- Chat Messages Area -->
+                <div id="chat-messages" class="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 bg-purple-50/30 chat-container">
+                    <!-- Sapaan pertama akan muncul di sini secara dinamis -->
+                </div>
+
+                <!-- Chat Footer: Pilihan Jawaban / Menu Interaktif -->
+                <div class="p-4 bg-white border-t border-purple-100 flex flex-col gap-3">
+                    <div class="text-center text-xs text-purple-500 font-semibold mb-1" id="action-title">
+                        👇 SILAKAN JAWAB PERTANYAAN KAKAK TUTOR DI BAWAH:
+                    </div>
+
+                    <!-- Area Tombol Jawaban Pilihan Ganda -->
+                    <div id="quiz-options-container" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <!-- Tombol pilihan ganda akan di-generate dinamis lewat JavaScript -->
+                    </div>
+
+                    <!-- Input Chat Bebas (Hanya Aktif Jika Gemini API Terpasang) -->
+                    <div id="free-input-container" class="hidden flex gap-2">
+                        <input type="text" id="free-user-input" placeholder="Tulis jawaban bahasa Arab atau tanggapan kamu disini..." class="flex-1 px-4 py-3 rounded-xl border border-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm">
+                        <button onclick="sendFreeMessage()" class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-xl font-bold text-sm transition">
+                            Kirim <i class="fa-solid fa-paper-plane ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Kanan: Dashboard Cheat Sheet Sharaf Aktif -->
+            <div class="w-full lg:w-80 flex flex-col gap-5">
+                
+                <!-- Status Pembelajaran & Tingkat Kemajuan -->
+                <div class="glass-card rounded-3xl p-5 shadow-md border border-purple-100">
+                    <h4 class="font-bold text-purple-900 text-sm tracking-wide uppercase mb-3"><i class="fa-solid fa-bars-progress text-purple-600 mr-1.5"></i> Progress Belajar</h4>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-xs font-bold text-purple-700 mb-1">
+                                <span>Misi Percakapan</span>
+                                <span id="progress-text">1 / 5</span>
+                            </div>
+                            <div class="w-full bg-purple-100 rounded-full h-2.5">
+                                <div id="progress-bar" class="bg-gradient-to-r from-purple-600 to-pink-500 h-2.5 rounded-full transition-all duration-500" style="width: 20%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cheat Sheet Sharaf (Kamus Kecil Pendukung Belajar) -->
+                <div class="glass-card rounded-3xl p-5 shadow-md border border-purple-100 flex-1 flex flex-col min-h-[300px]">
+                    <h4 class="font-bold text-purple-900 text-sm tracking-wide uppercase mb-3"><i class="fa-solid fa-book-open text-purple-600 mr-1.5"></i> Rumus Sharaf Hari Ini</h4>
+                    <div id="cheat-sheet-content" class="flex-1 space-y-3 text-xs md:text-sm text-purple-950 overflow-y-auto">
+                        <!-- Panduan Sharaf akan berganti otomatis sesuai level -->
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-purple-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-purple-950"><i class="fa-solid fa-key text-purple-600 mr-1.5"></i> Hubungkan ke Gemini API</h3>
+                <button onclick="toggleSettingsModal()" class="text-purple-400 hover:text-purple-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-xs text-purple-600 mb-4 leading-relaxed">
+                Ingin beralih ke percakapan bebas tanpa batas bersama AI? Masukkan Google Gemini API Key milikmu di bawah. Data kunci aman hanya tersimpan di browser lokalmu!
+            </p>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-purple-800 mb-1.5">API Key Gemini Anda:</label>
+                    <input type="password" id="api-key-input" placeholder="Masukkan API Key (AIzaSy...)" class="w-full px-4 py-2.5 rounded-xl border border-purple-200 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm font-mono">
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="saveApiKey()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-xs transition">Simpan & Aktifkan AI</button>
+                    <button onclick="clearApiKey()" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2.5 px-4 rounded-xl text-xs transition">Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl animate-shake">
+            <span class="text-6xl mb-4 block animate-bounce">💔</span>
+            <h3 class="text-2xl font-black text-purple-950 mb-2">Yah, Nyawa Habis!</h3>
+            <p class="text-sm text-purple-600 mb-6">
+                Tidak apa-apa, namanya juga proses belajar! Yuk kita coba ulang dari awal untuk memperkuat ingatan Sharaf kita. ✨
+            </p>
+            <button onclick="resetGame()" class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-2xl shadow-lg transition duration-300 hover:scale-105 active:scale-95">
+                Coba Ulang Kelas 🔄
+            </button>
+        </div>
+    </div>
+
+    <!-- Mission Accomplished Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
+            <span class="text-6xl mb-4 block animate-bounce-slow">👑</span>
+            <h3 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-pink-600 mb-2">Mumtaz! Kamu Luar Biasa!</h3>
+            <p class="text-sm text-purple-600 mb-6">
+                Kamu berhasil menyelesaikan seluruh babak percakapan Sharaf dengan Kakak Tutor hari ini! Kamu hebat sekali! 🎉👏
+            </p>
+            <div class="bg-purple-50 p-4 rounded-xl mb-6">
+                <span class="text-xs text-purple-500 font-semibold uppercase block">Skor Akhir Kamu</span>
+                <span class="text-3xl font-black text-purple-950" id="final-score">150</span> <span class="text-purple-600 font-bold">Poin</span>
+            </div>
+            <button onclick="resetGame()" class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-2xl shadow-lg transition duration-300 hover:scale-105">
+                Main Lagi! 🔄
+            </button>
+        </div>
+    </div>
+
+    <footer class="py-4 text-center text-xs text-purple-400 mt-auto border-t border-purple-50/50">
+        <p>© 2026 Arabric Mahir. UAS Chatbot Pembelajaran Bahasa Arab.</p>
+    </footer>
+
+    <script>
+        // State Management Game
+        let state = {
+            score: 100,
+            lives: 3,
+            currentLevel: '1',
+            currentStep: 0,
+            hasApiKey: false,
+            geminiKey: ''
+        };
+
+        // Database Cheat Sheet Panduan Sharaf
+        const cheatSheets = {
+            '1': `
+                <div class="p-3 bg-purple-50 rounded-xl border border-purple-100">
+                    <p class="font-bold text-purple-950 mb-1">Mengenal Fi'il Madhi (Masa Lalu) 🕰️</p>
+                    <p class="text-xs text-purple-700">Perubahan kata kerja untuk menyatakan perbuatan yang sudah selesai dilakukan.</p>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-white border border-purple-100">
+                        <span class="font-bold text-purple-600">ذَهَبْتُ (Dahab-tu)</span>
+                        <span class="text-xs text-purple-950">Saya sudah pergi (أَنَا)</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-white border border-purple-100">
+                        <span class="font-bold text-purple-600">ذَهَبْتَ (Dahab-ta)</span>
+                        <span class="text-xs text-purple-950">Kamu (Laki-laki) sudah pergi (أَنْتَ)</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-white border border-purple-100">
+                        <span class="font-bold text-purple-600">ذَهَبْتِ (Dahab-ti)</span>
+                        <span class="text-xs text-purple-950">Kamu (Perempuan) sudah pergi (أَنْتِ)</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-white border border-purple-100">
+                        <span class="font-bold text-purple-600">ذَهَبْنَا (Dahab-naa)</span>
+                        <span class="text-xs text-purple-950">Kita/Kami sudah pergi (نَحْنُ)</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-white border border-purple-100">
+                        <span class="font-bold text-purple-600">ذَهَبَ (Dahaba)</span>
+                        <span class="text-xs text-purple-950">Dia (Laki-laki) sudah pergi (هُوَ)</span>
+                    </div>
+                </div>
+            `,
+            '2': `
+                <div class="p-3 bg-purple-50 rounded-xl border border-purple-100">
+                    <p class="font-bold text-purple-950 mb-1">Mengenal Fi'il Mudhari' (Masa Kini) ⏳</p>
+                    <p class="text-xs text-purple-700">Perubahan kata kerja untuk menyatakan perbuatan yang sedang atau akan dilakukan.</p>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-white border border-purple-100">
+                        <span class="font-bold text-purple-600">أَكْتُبُ (Aktubu)</span>
+                        <span class="text-xs text-purple-950">Saya sedang menulis (أَنَا)</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-white border border-purple-100">
+                        <span class="font-bold text-purple-600">تَكْتُبُ (Taktubu)</span>
+                        <span class="text-xs text-purple-950">Kamu (Laki-laki) sedang menulis (أَنْتَ)</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-white border border-purple-100">
+                        <span class="font-bold text-purple-600">تَكْتُبِيْنَ (Taktubiina)</span>
+                        <span class="text-xs text-purple-950">Kamu (Perempuan) sedang menulis (أَنْتِ)</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-white border border-purple-100">
+                        <span class="font-bold text-purple-600">نَكْتُبُ (Naktubu)</span>
+                        <span class="text-xs text-purple-950">Kita sedang menulis (نَحْنُ)</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-white border border-purple-100">
+                        <span class="font-bold text-purple-600">يَكْتُبُ (Yaktubu)</span>
+                        <span class="text-xs text-purple-950">Dia (Laki-laki) sedang menulis (هُوَ)</span>
+                    </div>
+                </div>
+            `
+        };
+
+        // Database Alur Percakapan Terbimbing (Story Mode)
+        const dialogueScenarios = {
+            '1': [
+                {
+                    speaker: 'tutor',
+                    text: 'Ahlan wa Sahlan, Sahabat Arabric! 👋 Senang sekali kita bisa belajar bareng hari ini. Kakak mau tanya dulu nih, kamu apa kabar? (كَيْفَ حَالُكَ؟)',
+                    options: [
+                        { text: 'بِخَيْرٍ وَالْحَمْدُ للهِ (Baik dan Alhamdulillah)', isCorrect: true, nextText: 'Alhamdulillah, ikut senang mendengarnya! Yuk kita lanjut ya.' },
+                        { text: 'أَنَا تَعْبَانٌ (Aku sedang lelah)', isCorrect: true, nextText: 'Oh ya? Semoga belajar bersama Kakak bisa mengembalikan semangatmu ya!' }
+                    ]
+                },
+                {
+                    speaker: 'tutor',
+                    text: 'Sekarang, bayangkan kita baru saja pulang kuliah. Kakak mau bilang: "Saya sudah pergi ke perpustakaan tadi sore." Kata kerja mana yang tepat untuk melengkapi kalimat: أَنَا ____ إِلَى الْمَكْتَبَةِ ؟',
+                    options: [
+                        { text: 'ذَهَبْتَ (Dahab-ta)', isCorrect: false, feedback: 'Kurang tepat! Akhiran "-ta" (تَ) itu untuk "Kamu laki-laki". Kalau "Saya" akhiran apa hayo? 😉' },
+                        { text: 'ذَهَبْتُ (Dahab-tu)', isCorrect: true, feedback: 'M ممتاز! Hebat sekali! Akhiran "-tu" (تُ) adalah penanda untuk "Saya/Aku" (أَنَا) dalam Fi\'il Madhi.' }
+                    ]
+                },
+                {
+                    speaker: 'tutor',
+                    text: 'Keren! Nah, kalau kita pergi ke perpustakaan bareng-bareng ("Kita sudah pergi"), kata kerjanya berubah jadi apa ya? نَحْنُ ____ إِلَى الْمَكْتَبَةِ ؟',
+                    options: [
+                        { text: 'ذَهَبْنَا (Dahab-naa)', isCorrect: true, feedback: 'Sahih! Akhiran panjang "-naa" (نَا) digunakan khusus untuk "Kita/Kami" (نَحْنُ).' },
+                        { text: 'ذَهَبْتِ (Dahab-ti)', isCorrect: false, feedback: 'Masih keliru nih. Akhiran "-ti" (تِ) adalah untuk "Kamu perempuan". Coba ingat-ingat lagi rumusnya ya.' }
+                    ]
+                },
+                {
+                    speaker: 'tutor',
+                    text: 'Luar biasa progresmu! Sekarang mari kita praktikkan dalam dialog langsung. Jika Kakak bertanya padamu: "Apakah kamu (Laki-laki) sudah pergi ke kampus?" (هَلْ ذَهَبْتَ إِلَى الْجَامِعَةِ؟). Jawablah dengan: "Iya, saya sudah pergi ke kampus."',
+                    options: [
+                        { text: 'نَعَمْ، ذَهَبْتُ إِلَى الْجَامِعَةِ (Na\'am, dahab-tu)', isCorrect: true, feedback: 'Mumtaz! Kamu merubah "Dahab-ta" dari pertanyaan menjadi "Dahab-tu" saat menjawab diri sendiri. Keren!' },
+                        { text: 'نَعَمْ، ذَهَبْتَ إِلَى الْجَامِعَةِ (Na\'am, dahab-ta)', isCorrect: false, feedback: 'Ups, salah ganti nih. Kalau ditanya "Apakah kamu pergi?", jawabannya harusnya "Iya, SAYA pergi", bukan "Iya, KAMU pergi". 😉' }
+                    ]
+                },
+                {
+                    speaker: 'tutor',
+                    text: 'Misi terakhir untuk Level 1! Kakak punya teman namanya Fatimah. Dia (perempuan) baru saja pergi ke kantin. Kalimat Sharaf mana yang paling tepat untuk mendeskripsikannya? فَاطِمَةُ ____ إِلَى الْمَقْصَفِ.',
+                    options: [
+                        { text: 'ذَهَبَتْ (Dahabat)', isCorrect: true, feedback: '100 Poin untuk kamu! Akhiran sukun "-at" (تْ) menandakan "Dia perempuan" (هِيَ).' },
+                        { text: 'ذَهَبَ (Dahaba)', isCorrect: false, feedback: 'Hampir benar, tapi "Dahaba" itu untuk laki-laki (هُوَ). Karena ini Fatimah, harus pakai akhiran ta\' ta\'nits sukun.' }
+                    ]
+                }
+            ],
+            '2': [
+                {
+                    speaker: 'tutor',
+                    text: 'Ahlan bika di Level 2! 🏫 Di sini kita akan belajar Fi\'il Mudhari\' (kegiatan yang sedang dikerjakan). Bayangkan kita sedang berada di dalam kelas. Kakak melihatmu sedang memegang pulpen. Kakak bertanya: "Apa yang sedang kamu (laki-laki) tulis?" (مَاذَا تَكْتُبُ؟). Jawab dengan: "Aku sedang menulis pelajaran."',
+                    options: [
+                        { text: 'أَكْتُبُ الدَّرْسَ (Aktubu ad-darsa)', isCorrect: true, feedback: 'Mumtaz jiddan! Huruf Alif (أَ) di depan menandakan "Aku sedang..." (أَنَا أَكْتُبُ).' },
+                        { text: 'تَكْتُبُ الدَّرْسَ (Taktubu ad-darsa)', isCorrect: false, feedback: 'Kurang tepat. Kalau "Taktubu", artinya "Kamu sedang menulis". Jawabannya harus berawalan "Aku" ya!' }
+                    ]
+                },
+                {
+                    speaker: 'tutor',
+                    text: 'Hebat! Nah, jika di sebelahmu ada seorang mahasiswi perempuan (Aisyah) yang juga sedang menulis pelajaran, bagaimana kalimat Sharaf yang benar untuknya? عَائِشَةُ ____ الدَّرْسَ.',
+                    options: [
+                        { text: 'يَكْتُبُ الدَّرْسَ (Yaktubu)', isCorrect: false, feedback: 'Ingat, "Yaktubu" dengan awalan huruf "Ya" (يَ) adalah untuk "Dia laki-laki" (هُوَ). Untuk perempuan harus diganti huruf depannya.' },
+                        { text: 'تَكْتُبُ الدَّرْسَ (Taktubu)', isCorrect: true, feedback: 'Sempurna! Huruf awalan "Ta" (تَ) di dalam Fi\'il Mudhari\' bisa digunakan untuk mendeskripsikan "Dia perempuan" (هِيَ).' }
+                    ]
+                },
+                {
+                    speaker: 'tutor',
+                    text: 'Luar biasa pintar! Sekarang, bagaimana jika kita menulis pelajaran bersama-sama di kelas? Kalimat mana yang benar untuk mewakili kita semua? نَحْنُ ____ الدَّرْسَ.',
+                    options: [
+                        { text: 'نَكْتُبُ الدَّرْسَ (Naktubu)', isCorrect: true, feedback: 'Sahih! Awalan "Nun" (نَ) menandakan aktivitas yang dikerjakan "Kami/Kita" (نَحْنُ نَكْتُبُ).' },
+                        { text: 'يَكْتُبُونَ الدَّرْسَ (Yaktubuuna)', isCorrect: false, feedback: 'Masih belum tepat. "Yaktubuuna" itu untuk "Mereka laki-laki banyak". Untuk kita, ganti huruf depannya saja.' }
+                    ]
+                },
+                {
+                    speaker: 'tutor',
+                    text: 'Keren! Tantangan berlanjut. Kakak mau bertanya langsung kepadamu (perempuan): "Apakah kamu (anti) sedang menulis surat?" (هَلْ تَكْتُبِيْنَ الرِّسَالَةَ؟). Jawab dengan: "Iya, saya sedang menulis surat."',
+                    options: [
+                        { text: 'نَعَمْ، تَكْتُبِيْنَ الرِّسَالَةَ (Na\'am, taktubiina)', isCorrect: false, feedback: 'Ups, terbalik lagi! "Taktubiina" itu artinya "kamu sedang menulis". Di dalam jawaban, ubah kata kerjanya agar bermakna "SAYA sedang menulis".' },
+                        { text: 'نَعَمْ، أَكْتُبُ الرِّسَالَةَ (Na\'am, aktubu)', isCorrect: true, feedback: 'Luar biasa jenius! Perubahan dari "Taktubiina" ke "Aktubu" adalah logika Sharaf percakapan yang sangat penting.' }
+                    ]
+                },
+                {
+                    speaker: 'tutor',
+                    text: 'Pertanyaan pamungkas Level 2! Kakak ingin mengabarkan kalau dosen kita, Ustaz Ahmad, sedang menulis di papan tulis. Kalimat mana yang paling fasih dan benar? الْأُسْتَاذُ أَحْمَدُ ____ عَلَى السَّبُّورَةِ.',
+                    options: [
+                        { text: 'يَكْتُبُ (Yaktubu)', isCorrect: true, feedback: 'Sempurna! Kamu resmi menguasai materi Sharaf dan Kalam level ini dengan nilai terbaik! 🥳👑' },
+                        { text: 'أَكْتُبُ (Aktubu)', isCorrect: false, feedback: 'Kurang tepat. "Aktubu" itu untuk saya. Karena Ustaz Ahmad adalah "Dia laki-laki" (هُوَ), harusnya menggunakan awalan "Ya".' }
+                    ]
+                }
+            ]
+        };
+
+        // Fungsi Suara Sintetis (Web Speech Synthesis) untuk Maharah Kalam
+        function speakArabic(text) {
+            if ('speechSynthesis' in window) {
+                // Bersihkan teks dari harakat berlebih jika terjadi masalah pembacaan (opsional, tapi web modern sudah bagus membaca harakat)
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ar-SA'; // Kode suara Arab Saudi
+                utterance.rate = 0.85; // Diperlambat sedikit agar mudah ditiru pemula
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Fungsi Pembuat Efek Suara Sintetis (Web Audio API) agar Tanpa File Eksternal
+        function playSound(type) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.15); // E5
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.35);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, ctx.currentTime);
+                    osc.frequency.setValueAtTime(100, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.4);
+                }
+            } catch (e) {
+                console.log('Audio Context diblokir atau tidak didukung browser ini.');
+            }
+        }
+
+        // Memilih Level
+        function selectLevel(levelNum) {
+            state.currentLevel = levelNum;
+            
+            // Perbarui gaya tombol level
+            for (let i = 1; i <= 2; i++) {
+                const btn = document.getElementById(`btn-lvl-${i}`);
+                if (btn) {
+                    if (i == levelNum) {
+                        btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-purple-500 bg-purple-100 text-purple-950 hover:bg-purple-200 font-bold flex items-center justify-between transition-all";
+                        btn.innerHTML = `<span>🗣️ Level ${i}: ${i == 1 ? "Kamar Kosan (Fi'il Madhi)" : "Kelas & Sekolah (Fi'il Mudhari')"}</span> <i class="fa-solid fa-circle-check text-purple-600"></i>`;
+                    } else {
+                        btn.className = "w-full text-left p-3.5 rounded-xl border border-purple-200 bg-white text-purple-900 hover:bg-purple-50 flex items-center justify-between transition-all";
+                        btn.innerHTML = `<span>🏫 Level ${i}: ${i == 1 ? "Kamar Kosan (Fi'il Madhi)" : "Kelas & Sekolah (Fi'il Mudhari')"}</span> <i class="fa-solid fa-lock text-purple-300"></i>`;
+                    }
+                }
+            }
+        }
+
+        // Memulai Game
+        function startGame() {
+            document.getElementById('intro-panel').classList.add('hidden');
+            document.getElementById('game-panel').classList.remove('hidden');
+            
+            // Atur Cheat Sheet sesuai Level
+            document.getElementById('cheat-sheet-content').innerHTML = cheatSheets[state.currentLevel];
+            
+            state.currentStep = 0;
+            state.score = 100;
+            state.lives = 3;
+            updateStats();
+            
+            // Kosongkan chat lama
+            document.getElementById('chat-messages').innerHTML = '';
+            
+            // Tampilkan Skenario Pertama
+            loadScenarioStep();
+        }
+
+        // Memperbarui UI Poin dan Nyawa
+        function updateStats() {
+            document.getElementById('score-val').innerText = state.score;
+            
+            // Nyawa Hearts render
+            let heartsHtml = '';
+            for (let i = 0; i < 3; i++) {
+                if (i < state.lives) {
+                    heartsHtml += '<i class="fa-solid fa-heart animate-pulse text-red-500 text-sm md:text-base"></i>';
+                } else {
+                    heartsHtml += '<i class="fa-regular fa-heart text-gray-300 text-sm md:text-base"></i>';
+                }
+            }
+            document.getElementById('lives-container').innerHTML = heartsHtml;
+
+            // Bar Progres
+            const totalSteps = dialogueScenarios[state.currentLevel].length;
+            const percentage = ((state.currentStep + 1) / totalSteps) * 100;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+            document.getElementById('progress-text').innerText = `${state.currentStep + 1} / ${totalSteps}`;
+        }
+
+        // Memuat langkah skenario aktif
+        function loadScenarioStep() {
+            const scenario = dialogueScenarios[state.currentLevel];
+            
+            if (state.currentStep >= scenario.length) {
+                showSuccessModal();
+                return;
+            }
+
+            const currentData = scenario[state.currentStep];
+            
+            // Tambahkan bubble tutor
+            addChatBubble('tutor', currentData.text);
+            
+            // Buat pilihan jawaban di tombol
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+            
+            currentData.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 rounded-xl border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-900 text-sm font-semibold transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-between";
+                
+                // Pisahkan teks Arab dan Latin agar rapi
+                btn.innerHTML = `
+                    <span>${opt.text}</span>
+                    <span class="bg-white px-2 py-1 rounded-lg text-xs text-purple-600 border border-purple-100"><i class="fa-solid fa-volume-high"></i> Play</span>
+                `;
+                
+                btn.onclick = () => handleAnswer(opt, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            updateStats();
+        }
+
+        // Menambahkan Gelembung Chat
+        function addChatBubble(sender, text) {
+            const chatMessages = document.getElementById('chat-messages');
+            const wrapper = document.createElement('div');
+            
+            // Deteksi teks arab di dalam chat untuk dipisahkan tombol audionya
+            const arabicRegex = /[\u0600-\u06FF]+/g;
+            const arabicWords = text.match(arabicRegex);
+            let playBtnHtml = '';
+            
+            if (arabicWords) {
+                const phraseToSpeak = arabicWords.join(' ');
+                playBtnHtml = `
+                    <button onclick="speakArabic('${phraseToSpeak}')" class="text-xs text-purple-600 bg-white/80 hover:bg-white p-1 rounded-lg ml-2 shadow-sm" title="Dengarkan pengucapan">
+                        <i class="fa-solid fa-volume-high"></i> Dengarkan
+                    </button>
+                `;
+            }
+
+            if (sender === 'tutor') {
+                wrapper.className = "flex gap-2.5 items-start max-w-[85%] animate-fade-in";
+                wrapper.innerHTML = `
+                    <div class="text-3xl">👩‍🏫</div>
+                    <div class="bg-gradient-to-tr from-purple-100 to-indigo-100 text-purple-950 px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm border border-purple-200/50">
+                        <p class="leading-relaxed font-medium">${text}</p>
+                        <div class="mt-2 flex justify-end">${playBtnHtml}</div>
+                    </div>
+                `;
+            } else {
+                wrapper.className = "flex gap-2.5 items-start max-w-[85%] ml-auto flex-row-reverse animate-fade-in";
+                wrapper.innerHTML = `
+                    <div class="text-3xl">🎓</div>
+                    <div class="bg-gradient-to-tr from-purple-600 to-pink-500 text-white px-4 py-3 rounded-2xl rounded-tr-none shadow-sm text-sm">
+                        <p class="leading-relaxed font-semibold">${text}</p>
+                    </div>
+                `;
+            }
+
+            chatMessages.appendChild(wrapper);
+            
+            // Auto scroll ke paling bawah
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Evaluasi Jawaban Pengguna
+        function handleAnswer(option, buttonElement) {
+            // Nonaktifkan tombol agar tidak dipencet berkali-kali
+            const buttons = document.getElementById('quiz-options-container').querySelectorAll('button');
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Tambah bubble chat user
+            addChatBubble('user', option.text);
+
+            setTimeout(() => {
+                if (option.isCorrect) {
+                    // JAWABAN BENAR
+                    playSound('correct');
+                    state.score += 15; // Tambah skor
+                    
+                    addChatBubble('tutor', option.feedback || 'Mumtaz! Jawabanmu benar sekali! 🎉');
+                    
+                    // Lanjut langkah berikutnya setelah delay singkat
+                    state.currentStep++;
+                    setTimeout(() => {
+                        loadScenarioStep();
+                    }, 2500);
+
+                } else {
+                    // JAWABAN SALAH (POIN & NYAWA BERKURANG)
+                    playSound('wrong');
+                    state.score = Math.max(0, state.score - 10); // Skor berkurang 10
+                    state.lives--; // Nyawa berkurang 1
+
+                    // Animasi getar layar tanda salah
+                    document.getElementById('game-panel').classList.add('animate-shake');
+                    setTimeout(() => {
+                        document.getElementById('game-panel').classList.remove('animate-shake');
+                    }, 500);
+
+                    addChatBubble('tutor', option.feedback || 'Sayang sekali, masih kurang tepat nih. Yuk coba pilih jawaban yang benar! 😊');
+
+                    updateStats();
+
+                    // Cek jika kalah
+                    if (state.lives <= 0) {
+                        setTimeout(() => {
+                            showGameOverModal();
+                        }, 1500);
+                        return;
+                    }
+
+                    // Aktifkan kembali tombol pilihan agar pengguna bisa memilih kembali
+                    setTimeout(() => {
+                        buttons.forEach(btn => btn.disabled = false);
+                    }, 1500);
+                }
+            }, 800);
+        }
+
+        // Menampilkan Layar Kalah
+        function showGameOverModal() {
+            document.getElementById('game-over-modal').classList.remove('hidden');
+        }
+
+        // Menampilkan Layar Menang / Berhasil
+        function showSuccessModal() {
+            document.getElementById('final-score').innerText = state.score;
+            document.getElementById('success-modal').classList.remove('hidden');
+        }
+
+        // Mulai Ulang Permainan
+        function resetGame() {
+            // Sembunyikan semua modal
+            document.getElementById('game-over-modal').classList.add('hidden');
+            document.getElementById('success-modal').classList.add('hidden');
+            document.getElementById('game-panel').classList.add('hidden');
+            
+            // Kembalikan ke menu utama
+            document.getElementById('intro-panel').classList.remove('hidden');
+        }
+
+        // Toggle Modal API Key
+        function toggleSettingsModal() {
+            const modal = document.getElementById('settings-modal');
+            modal.classList.toggle('hidden');
+            
+            // Jika ada key lama, tampilkan di kolom input
+            const localKey = localStorage.getItem('gemini_api_key');
+            if (localKey) {
+                document.getElementById('api-key-input').value = localKey;
+            }
+        }
+
+        // Menyimpan API Key (Untuk mode Open-AI Chatbebas di masa mendatang)
+        function saveApiKey() {
+            const key = document.getElementById('api-key-input').value.trim();
+            if (key) {
+                localStorage.setItem('gemini_api_key', key);
+                state.geminiKey = key;
+                state.hasApiKey = true;
+                
+                // Aktifkan free text input, sembunyikan kuis multiple choice
+                document.getElementById('quiz-options-container').classList.add('hidden');
+                document.getElementById('free-input-container').classList.remove('hidden');
+                document.getElementById('action-title').innerHTML = "🟢 CHATBOT AI GEMINI AKTIF! TANYA APA SAJA TENTANG ARABIC SEKARANG:";
+                
+                toggleSettingsModal();
+                addChatBubble('tutor', 'Hore! Koneksi AI Gemini berhasil tersambung. Sekarang kamu bebas bertanya apa saja tentang Sharaf atau mengobrol bahasa Arab denganku! 🤩✨');
+            }
+        }
+
+        // Menghapus API Key
+        function clearApiKey() {
+            localStorage.removeItem('gemini_api_key');
+            state.geminiKey = '';
+            state.hasApiKey = false;
+            document.getElementById('api-key-input').value = '';
+            
+            // Kembalikan ke mode default
+            document.getElementById('quiz-options-container').classList.remove('hidden');
+            document.getElementById('free-input-container').classList.add('hidden');
+            document.getElementById('action-title').innerHTML = "👇 SILAKAN JAWAB PERTANYAAN KAKAK TUTOR DI BAWAH:";
+            
+            toggleSettingsModal();
+        }
+
+        // Logika Pengiriman Pesan Bebas via Gemini API
+        async function sendFreeMessage() {
+            const userInputField = document.getElementById('free-user-input');
+            const userText = userInputField.value.trim();
+            
+            if (!userText) return;
+            
+            // Tampilkan bubble user
+            addChatBubble('user', userText);
+            userInputField.value = '';
+
+            // Tampilkan visual loading tutor mengetik
+            addChatBubble('tutor', 'Kakak sedang berpikir sebentar ya... ✍️');
+
+            const key = localStorage.getItem('gemini_api_key');
+            if (!key) {
+                setTimeout(() => {
+                    // Hapus pesan loading terakhir
+                    const chatMessages = document.getElementById('chat-messages');
+                    chatMessages.removeChild(chatMessages.lastChild);
+                    addChatBubble('tutor', 'API Key hilang. Silakan pasang kembali API key di panel atas.');
+                }, 1000);
+                return;
+            }
+
+            try {
+                // Tembak REST API Gemini secara aman dari client-side
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `Anda adalah Kakak Tutor Arabric Mahir, asisten ramah mengajar kalam & sharaf pemula. Berikan respons lembut, beri emoji banyak, dan batasi jawaban dalam 1-3 kalimat saja! Pertanyaan siswa: "${userText}"`
+                            }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Hapus pesan loading terakhir
+                const chatMessages = document.getElementById('chat-messages');
+                chatMessages.removeChild(chatMessages.lastChild);
+
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    const reply = data.candidates[0].content.parts[0].text;
+                    addChatBubble('tutor', reply);
+                } else {
+                    addChatBubble('tutor', 'Aduh maaf, Kakak agak bingung tadi. Bisa diulang pertanyaannya? 🥺');
+                }
+            } catch (err) {
+                const chatMessages = document.getElementById('chat-messages');
+                chatMessages.removeChild(chatMessages.lastChild);
+                addChatBubble('tutor', 'Koneksi gagal. Pastikan kuota internetmu aman dan API Key valid ya! 😢');
+            }
+        }
+
+        // Load awal data saat pertama kali halaman terbuka
+        window.onload = function() {
+            const localKey = localStorage.getItem('gemini_api_key');
+            if (localKey) {
+                state.geminiKey = localKey;
+                state.hasApiKey = true;
+                document.getElementById('quiz-options-container').classList.add('hidden');
+                document.getElementById('free-input-container').classList.remove('hidden');
+                document.getElementById('action-title').innerHTML = "🟢 CHATBOT AI GEMINI AKTIF! TANYA APA SAJA TENTANG ARABIC SEKARANG:";
+            }
+        };
+    </script>
+</body>
+</html>
